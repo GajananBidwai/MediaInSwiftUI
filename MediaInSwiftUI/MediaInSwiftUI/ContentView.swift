@@ -9,30 +9,50 @@ import SwiftUI
 import PhotosUI
 
 struct ContentView: View {
-    @State private var selected: PhotosPickerItem?
+//    @State private var selected: PhotosPickerItem?
+//    @State private var picture: UIImage?
+    @State private var path = NavigationPath()
     @State private var picture: UIImage?
     
     var body: some View {
-        NavigationStack {
+//        NavigationStack {
+//            VStack {
+//                Image(uiImage: (picture ?? UIImage(named: "noImage"))!)
+//                    .resizable()
+//                    .scaledToFit()
+//                Spacer()
+//                PhotosPicker(selection: $selected, matching: .images,photoLibrary: .shared()) {
+//                    Text("Select a photo")
+//                        .padding()
+//                        .buttonStyle(.borderedProminent)
+//                }
+//            }
+//            .onChange(of: selected, initial: false) { oldValue, newValue in
+//                Task(priority: .background) {
+//                    if let data = try? await newValue?.loadTransferable(type: Data.self) {
+//                        picture = UIImage(data: data)
+//                    }
+//                }
+//            }
+//        }
+        
+//        Open Camera
+        NavigationStack(path: $path) {
             VStack {
+                HStack {
+                    Spacer()
+                    NavigationLink("Get Picture", value: "Open picture")
+                }.navigationDestination(for: String.self) { _ in
+                    ImagePicker(path: $path, picture: $picture)
+                }
                 Image(uiImage: (picture ?? UIImage(named: "noImage"))!)
                     .resizable()
-                    .scaledToFit()
+                    .scaledToFill()
+                    .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                 Spacer()
-                PhotosPicker(selection: $selected, matching: .images,photoLibrary: .shared()) {
-                    Text("Select a photo")
-                        .padding()
-                        .buttonStyle(.borderedProminent)
-                }
-            }
-            .onChange(of: selected, initial: false) { oldValue, newValue in
-                Task(priority: .background) {
-                    if let data = try? await newValue?.loadTransferable(type: Data.self) {
-                        picture = UIImage(data: data)
-                    }
-                }
-            }
-        }
+            }.padding()
+        }.statusBarHidden()
+        
     }
 }
 
